@@ -1,9 +1,23 @@
-# moeten we venv gebruiken of is software zoals anaconda gebruiken
-# github plus met AP account via student github
+### Om de requirements.txt te maken gebruik je pip freeze > requirements.txt ###
 
-def init():
+# imports
+import sys  # laat toe om sys.argv[] te gebruiken
+
+
+# funtions
+def Init() -> None:
+    '''
+    Runt bij het opstarten van het programma. Kijkt of de Serverlijst bestaat. Indien niet maakt hij deze aan
+    '''
+    serverlijst = []
     bestandsLocatie = "Serverlijst.txt"
-    open(bestandsLocatie)
+    try:
+        with open(bestandsLocatie, "r") as file:
+            for line in file:
+                serverlijst.append(line)
+    except FileNotFoundError:
+        open(bestandsLocatie, "w")
+
 
 def Ping(IPaddress: str, timeout: int = 1, count: int = 1, silent: bool = False) -> bool:
     """
@@ -30,9 +44,10 @@ def ServerlijstWeergeven():
 
 
 def Main():
+    Init()
     while True:
         print("Wat wilt u doen?\n1. Server toevoegen\n2. Server verwijderen\n3. Serverlijst weergeven\n4. Server pingen")
-        keuze: input("1,2,3 of 4? (q: quit)")
+        keuze = input("1,2,3 of 4? (q: quit)\n")
         match keuze:
             case "1":
                 print("Server toevoegen")
@@ -42,13 +57,13 @@ def Main():
                 print("Serverlijst weergeven")
             case "4":
                 print("Server pingen")
+                IPaddress = input("Welk ip-address wilt u pingen")
             case "q":
                 exit()
             case _:
                 print("Geef een geldige invoer in")
 
-        IPaddress = input("Welk ip-address wilt u pingen")
-
+## wat is de __name__ als ik mijn programma run via python pingding argumenten
 
 if __name__ == "__main__":
     Main()
