@@ -1,69 +1,110 @@
-### Om de requirements.txt te maken gebruik je pip freeze > requirements.txt ###
-
-# imports
 import sys  # laat toe om sys.argv[] te gebruiken
+import json
+from ping3 import ping
 
 
-# funtions
 def Init() -> None:
-    '''
-    Runt bij het opstarten van het programma. Kijkt of de Serverlijst bestaat. Indien niet maakt hij deze aan
-    '''
-    serverlijst = []
-    bestandsLocatie = "Serverlijst.txt"
-    try:
-        with open(bestandsLocatie, "r") as file:
-            for line in file:
-                serverlijst.append(line)
-    except FileNotFoundError:
-        open(bestandsLocatie, "w")
+
+    # Kijkt of de file gerunt wordt met of zonder agrumenten. Indien er argumenten zijn zal hij deze toekennen aan keuze
+
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "1" or sys.argv[1] == "2" or sys.argv[1] == "3" or sys.argv[1] == "4":
+            keuze = sys.argv[1]
+            return keuze
+        elif sys.argv[1] == "help" or sys.argv[1] == "h":
+            print(
+                "1: Server toevoegen\n2: Server verwijderen\n3: Serverlijst weergeven\n4: Server pingen")
+            exit()
+        else:
+            print("Geef een geldige invoer in")
+            exit()
+    else:
+        keuze = ""
+        return keuze
 
 
-def Ping(IPaddress: str, timeout: int = 1, count: int = 1, silent: bool = False) -> bool:
-    """
-    Een functie die pingt naar een remote server om te kijken of die online is
-    :param IPaddress: IP address van de remote server
-    :param timeout: hoe lang moet de functie wachten op een antwoord
-    :param count: hoe vaak moet de functie pingen
-    :param silent: True of False, als True dan geen print statements
-    :return: True of False    
-    """
-    pass
+def Ping():
+    serverlijst = "files/serverlist.json"
+    with open(serverlijst, "r") as sl:
+        for server in json.load(sl):
+            print("----------------------------")
+            print(f"Pingen van {server['naam']}...")
+            if ping(server["adres"]) == False:
+                print(f"{server['naam']} is offline")
+            else:
+                print(f"{server['naam']} is online")
+    print("----------------------------")
 
 
 def ServerToevoegen():
-    pass
+    serverlijst = "files/serverlist.json"
+    serverNaam = input("Wat is de naam van de server?\n")
+    serverAdres = input("Wat is het adres (bv facebook.com)\n")
+    with open(serverlijst, "r") as sl:
+        serverlist = json.load(sl)
+    newServer = {'naam': serverNaam, 'adres': serverAdres}
+    serverlist.append(newServer)
+    print("------------------------------------")
+    with open(serverlijst, "w") as sl:
+        json.dump(serverlist, sl, indent=4)
 
 
 def ServerVerwijderen():
-    pass
+    serverlijst = "files/serverlist.json"
+    toBeRemoved = input(
+        "Wat is de naam van de server die je wilt verwijderen?\n")
+    with open(serverlijst, "r") as sl:
+        serverlist = json.load(sl)
+    indexToRemove = None
+    for i, entry in enumerate(serverlist):
+        if entry["naam"] == toBeRemoved:
+            indexToRemove = i
+            break
+    if indexToRemove is not None:
+        del serverlist[indexToRemove]
+        print("entry deleted")
+        print("------------------------------------")
+    else:
+        print("site not found in list")
+        print("------------------------------------")
+
+    with open(serverlijst, "w") as sl:
+        json.dump(serverlist, sl, indent=4)
 
 
 def ServerlijstWeergeven():
-    pass
+    serverlijst = "files/serverlist.json"
+    print("------------------------------------")
+    print("De serverlijst is als volgt:")
+    with open(serverlijst) as sl:
+        for server in json.load(sl):
+            print(server['naam'])
+    print("------------------------------------")
 
 
 def Main():
-    Init()
+    keuze = Init()
+
     while True:
         print("Wat wilt u doen?\n1. Server toevoegen\n2. Server verwijderen\n3. Serverlijst weergeven\n4. Server pingen")
-        keuze = input("1,2,3 of 4? (q: quit)\n")
+        if keuze == "":
+            keuze = input("1,2,3 of 4? (q: quit)\n")
         match keuze:
             case "1":
-                print("Server toevoegen")
+                ServerToevoegen()
             case "2":
-                print("Server verwijderen")
+                ServerVerwijderen()
             case "3":
-                print("Serverlijst weergeven")
+                ServerlijstWeergeven()
             case "4":
-                print("Server pingen")
-                IPaddress = input("Welk ip-address wilt u pingen")
+                Ping()
             case "q":
                 exit()
             case _:
                 print("Geef een geldige invoer in")
 
-## wat is de __name__ als ik mijn programma run via python pingding argumenten
+        keuze = ""
+
 
 if __name__ == "__main__":
     Main()
