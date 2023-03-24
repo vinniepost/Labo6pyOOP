@@ -25,21 +25,37 @@ def Init() -> None:
 
 def Ping():
     serverlijst = "files/serverlist.json"
+    pingList = "files/pingList.json"
     with open(serverlijst, "r") as sl:
+        pinglist = []
         for server in json.load(sl):
             print("----------------------------")
             print(f"Pingen van {server['naam']}...")
             if ping(server["adres"]) == False:
                 print(f"{server['naam']} is offline")
+                active = False
+                dataForPinglist = {
+                    "naam": server['naam'], "active?": active}
+                pinglist.append(dataForPinglist)
             else:
                 print(f"{server['naam']} is online")
+                active = True
+                dataForPinglist = {
+                    "naam": server['naam'], "active?": active}
+                pinglist.append(dataForPinglist)
+        with open(pingList, "w") as pl:
+            json.dump(pinglist, pl, indent=4)
     print("----------------------------")
 
 
 def ServerToevoegen():
     serverlijst = "files/serverlist.json"
-    serverNaam = input("Wat is de naam van de server?\n")
-    serverAdres = input("Wat is het adres (bv facebook.com)\n")
+    if len(sys.argv) > 1:
+        serverNaam = sys.argv[2]
+        serverAdres = sys.argv[3]
+    else:
+        serverNaam = input("Wat is de naam van de server?\n")
+        serverAdres = input("Wat is het adres (bv facebook.com)\n")
     with open(serverlijst, "r") as sl:
         serverlist = json.load(sl)
     newServer = {'naam': serverNaam, 'adres': serverAdres}
@@ -51,8 +67,11 @@ def ServerToevoegen():
 
 def ServerVerwijderen():
     serverlijst = "files/serverlist.json"
-    toBeRemoved = input(
-        "Wat is de naam van de server die je wilt verwijderen?\n")
+    if len(sys.argv) > 1:
+        toBeRemoved = sys.argv[2]
+    else:
+        toBeRemoved = input(
+            "Wat is de naam van de server die je wilt verwijderen?\n")
     with open(serverlijst, "r") as sl:
         serverlist = json.load(sl)
     indexToRemove = None
@@ -91,6 +110,7 @@ def Main():
             keuze = input("1,2,3 of 4? (q: quit)\n")
         match keuze:
             case "1":
+
                 ServerToevoegen()
             case "2":
                 ServerVerwijderen()
