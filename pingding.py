@@ -1,6 +1,8 @@
 import sys  # laat toe om sys.argv[] te gebruiken
 import json
 from ping3 import ping
+from time import sleep
+from keyboard import is_pressed as kp
 
 
 def Init() -> None:
@@ -8,10 +10,20 @@ def Init() -> None:
     # Kijkt of de file gerunt wordt met of zonder agrumenten. Indien er argumenten zijn zal hij deze toekennen aan keuze
 
     if len(sys.argv) > 1:
+        if sys.argv[1] == "management" or sys.argv[1] == "m":
+            keuze = "m"
+            return keuze
+        elif sys.argv[1] == "check" or sys.argv[1] == "c":
+            keuze = "c"
+            return keuze
+
+    if len(sys.argv) > 1:
         if sys.argv[1] == "1" or sys.argv[1] == "2" or sys.argv[1] == "3" or sys.argv[1] == "4":
             keuze = sys.argv[1]
             return keuze
         elif sys.argv[1] == "help" or sys.argv[1] == "h":
+            print(
+                "Gebruik: python3 pingding.py [management/check] [1/2/3/4] [naam] [adres]")
             print(
                 "1: Server toevoegen\n2: Server verwijderen\n3: Serverlijst weergeven\n4: Server pingen")
             exit()
@@ -103,6 +115,46 @@ def ServerlijstWeergeven():
 
 def Main():
     keuze = Init()
+
+    if keuze == "m":
+        print("Management mode")
+        while True:
+            print(
+                "Wat wilt u doen?\n1. Server toevoegen\n2. Server verwijderen\n3. Serverlijst weergeven\n")
+            if keuze == "":
+                keuze = input("1,2 of 3? (q: quit)\n")
+            match keuze:
+                case "1":
+                    ServerToevoegen()
+                case "2":
+                    ServerVerwijderen()
+                case "3":
+                    ServerlijstWeergeven()
+                case "q":
+                    exit()
+                case _:
+                    print("Geef een geldige invoer in")
+            keuze = ""
+    elif keuze == "c":
+        print("Check mode")
+        while True:
+            print("Wat wilt u doen?\n1. Server pingen")
+            if keuze == "":
+                keuze = input("1? (q: quit)\n")
+            match keuze:
+                case "1":
+                    while True:
+                        Ping()
+                        print("----------------------------")
+                        print("q: quit\nwill check again in 2 minutes")
+                        if kp('q'):
+                            break
+                        sleep(120)
+                case "q":
+                    exit()
+                case _:
+                    print("Geef een geldige invoer in")
+            keuze = ""
 
     while True:
         print("Wat wilt u doen?\n1. Server toevoegen\n2. Server verwijderen\n3. Serverlijst weergeven\n4. Server pingen")
