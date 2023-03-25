@@ -14,5 +14,9 @@
     {
         "naam": "digitap",
         "adres": "student.ap.be"
+    },
+    {
+        "naam": "google",
+        "adres": "google.be"
     }
 ]

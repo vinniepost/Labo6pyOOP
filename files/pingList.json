@@ -14,5 +14,9 @@
     {
         "naam": "digitap",
         "active?": true
+    },
+    {
+        "naam": "google",
+        "active?": true
     }
 ]
