@@ -1,0 +1,18 @@
+[
+    {
+        "naam": "google",
+        "active?": true
+    },
+    {
+        "naam": "youtube",
+        "active?": true
+    },
+    {
+        "naam": "facebook",
+        "active?": true
+    },
+    {
+        "naam": "digitap",
+        "active?": true
+    }
+]
