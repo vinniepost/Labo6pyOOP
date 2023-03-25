@@ -1,13 +1,12 @@
-import sys  # laat toe om sys.argv[] te gebruiken
+import sys
 import json
 from ping3 import ping
 from time import sleep
 from keyboard import is_pressed as kp
+from jinja2 import Environment, FileSystemLoader
 
 
 def Init() -> None:
-
-    # Kijkt of de file gerunt wordt met of zonder agrumenten. Indien er argumenten zijn zal hij deze toekennen aan keuze
 
     if len(sys.argv) > 1:
         if sys.argv[1] == "management" or sys.argv[1] == "m":
@@ -113,6 +112,20 @@ def ServerlijstWeergeven():
     print("------------------------------------")
 
 
+def JsonToHTML():
+    jsonfile = "files/pingList.json"
+    with open(jsonfile) as f:
+        data = json.load(f)
+    env = Environment(loader=FileSystemLoader("."))
+    templatefile = "files/template.html"
+    template = env.get_template(templatefile)
+
+    output = template.render(data=data)
+    outputfile = "files/index.html"
+    with open(outputfile, "w") as f:
+        f.write(output)
+
+
 def Main():
     keuze = Init()
 
@@ -145,6 +158,7 @@ def Main():
                 case "1":
                     while True:
                         Ping()
+                        JsonToHTML()
                         print("----------------------------")
                         print("q: quit\nwill check again in 2 minutes")
                         if kp('q'):
