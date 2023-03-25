@@ -161,9 +161,11 @@ def Main():
                         JsonToHTML()
                         print("----------------------------")
                         print("q: quit\nwill check again in 2 minutes")
-                        if kp('q'):
-                            break
-                        sleep(120)
+                        while True:
+                            if kp("q"):
+                                return
+                            elif sleep(120) == True:
+                                break
                 case "q":
                     exit()
                 case _:
